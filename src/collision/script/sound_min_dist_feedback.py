@@ -2,7 +2,7 @@
 import rospy
 import math
 import time
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Empty
 from kobuki_msgs.msg import Sound
 
 class BipBipRadar:
@@ -18,7 +18,8 @@ class BipBipRadar:
     currDelay = delay_low
 
     def __init__(self):
-        self.pub = rospy.Publisher('/mobile_base/commands/sound', Sound, queue_size=10)
+        self.pub_sound = rospy.Publisher('/mobile_base/commands/sound', Sound, queue_size=10)
+        self.pub_blink = rospy.Publisher('/distance_warning_blink', Empty, queue_size=10)
 
     def run(self):
         while(not rospy.is_shutdown()):
@@ -26,7 +27,8 @@ class BipBipRadar:
                 time.sleep(self.currDelay)
                 sound = Sound()
                 sound.value = sound.BUTTON
-                self.pub.publish(sound)
+                self.pub_sound.publish(sound)
+                self.pub_blink.publish(Empty())
             else:
                 time.sleep(0.1) #wait
 
